@@ -6,7 +6,7 @@
 set -uo pipefail
 BASE="${BASE:-http://127.0.0.1:8100}"; KEY="${KEY:?set KEY to the admin API key}"
 which="${1:-all}"; here="$(dirname "$0")"; fail=0
-api() { curl -fsS -H "X-API-Key: ${KEY}" "$@"; }
+api() { curl -fsS ${INSECURE:+-k} -H "X-API-Key: ${KEY}" "$@"; }
 
 if [ "$which" = 1 ] || [ "$which" = all ]; then
     echo "== proof 1: background PDF + OCR"
@@ -50,7 +50,7 @@ for r,_,fs in os.walk('.'):
         [ "$st" = completed ] && break; sleep 5
     done
     echo "   install status: $st"
-    for n in $(seq 1 60); do curl -fsS -o /dev/null "${BASE}/healthz" && break; sleep 3; done
+    for n in $(seq 1 60); do curl -fsS ${INSECURE:+-k} -o /dev/null "${BASE}/healthz" && break; sleep 3; done
     I=docassemble.cloudronproof:data/questions/proof.yml
     s=$(api "${BASE}/api/session/new?i=${I}") || { echo "FAIL proof 2 (interview did not start)"; exit 1; }
     sess=$(echo "$s" | python3 -c 'import json,sys;print(json.load(sys.stdin)["session"])')

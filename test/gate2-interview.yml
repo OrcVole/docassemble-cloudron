@@ -1,0 +1,17 @@
+# Gate 2 flows that need an interview: DOCX to PDF through unoserver (LibreOffice) and mail through
+# the sendmail addon. The done screen prints both results for test/gate2.sh to check.
+metadata:
+  title: Cloudron gate 2
+---
+code: |
+  docx_source = DAStaticFile(filename='docassemble.base:data/templates/letter_template.docx')
+  converted = pdf_concatenate(docx_source, filename='converted.pdf')
+  docx_pdf_bytes = converted.size_in_bytes()
+---
+code: |
+  mail_ok = send_email(to='gate-check@example.com', subject='docassemble gate 2', body='Gate 2 mail check.')
+---
+mandatory: True
+question: Gate 2
+subquestion: |
+  GATE2 DOCXPDF=${ docx_pdf_bytes } MAIL=${ mail_ok }
