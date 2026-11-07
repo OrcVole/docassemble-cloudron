@@ -1,0 +1,8 @@
+# Fixed strings secret-scan may ignore. Each line is a REVIEWABLE CLAIM that the string is public by
+# design — never a way to quieten a real leak. Only ever list something already published on purpose.
+#
+# NLTK's corpora (WordNet, WordNet-IC, SentiWordNet) and Punkt tokenizer models, downloaded at build
+# time from NLTK's public data index (Dockerfile, builder stage). They contain ordinary words in many
+# languages, two of which match short identity patterns in the denylist (2026-11-07: 217 lines, all
+# under this path, none anywhere else). Public linguistic data, not a leak; scoped to this one path.
+/app/code/nltk_data/
