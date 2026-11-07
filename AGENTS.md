@@ -28,8 +28,9 @@ Not included: RabbitMQ, exim4, syslog-ng, Apache, certbot, upstream's cron and w
 ## Golden rules
 
 1. **Conformance to the Cloudron contract first.** Adapt the runtime environment, not the application.
-   **One recorded exception:** ADR 0003 (websocket Redis authentication). Any further patch needs its
-   own ADR, a build-time guard, and an upstream report.
+   **Recorded exceptions, each guarded at build time and reported upstream:** ADR 0003 (websocket
+   Redis authentication), ADR 0006 (default PDF font), ADR 0007 (two OCR bugs). Any further patch
+   needs its own ADR, a build-time guard, and an upstream report.
 2. **Pin everything** by digest or exact version: base, uv, the interpreter, docassemble, uWSGI,
    unoserver. One build argument for the docassemble version, mirrored as `upstreamVersion`.
 3. **Persisted state only in `/app/data`.** Re-assert ownership and mode on every boot.

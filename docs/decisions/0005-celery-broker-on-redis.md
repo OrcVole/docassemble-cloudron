@@ -1,6 +1,8 @@
 # 0005. The Redis addon as Celery's broker; no RabbitMQ
 
-- **Status:** proposed, 2026-11-07. Decided by proof 1, the first thing the build must pass.
+- **Status:** accepted, 2026-11-07. Proof 1 passed on the local stack, before and after a restart: a
+  background PDF (19,240 bytes) on the `celery` queue and its OCR on the `single` queue, through a
+  password-protected Redis on database 3.
 
 ## Context
 

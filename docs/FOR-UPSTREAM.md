@@ -22,7 +22,29 @@ defaults to the environment itself. Adding the prefix to `sys.path` (or document
 would let installations keep the environment read-only while still allowing add-ons and the
 Playground.
 
-## 3. Small documentation gaps met while packaging
+## 3. Background OCR to text recurses until the database pool is exhausted (bug, since 1.10.0)
+
+`webapp/tasks/tasks.py`, task `ocr_finalize`, final return: `content=ocr_finalize(*pargs, **kwargs)`
+calls the task itself. 1.9.0 had `worker_controller.util.ocr_finalize(...)`; the file imports that helper
+as `do_ocr_finalize`. Symptom: `ocr_file_in_background()` returns `QueuePool limit of size 5 overflow 10
+reached`. Fix: `content=do_ocr_finalize(*pargs, **kwargs)`.
+
+## 4. `ocr_page` passes a pixel size to `pdftoppm -r` (bug, 1.9.0 or earlier)
+
+`ocr_page_tasks` sets `ocr_resolution = str(int(float(ocr_resolution)*11.0))`, a `-scale-to` value
+(`ocr_file` uses it that way). `ocr_page`, when a page has no pre-rendered image, passes it to
+`pdftoppm -r`, so 300 becomes 3300 dpi; poppler refuses the allocation, exits 0 and writes a 1x1 PNG, and
+OCR returns nothing. Fix: `-scale-to` in that call. Visible with PDFs an interview assembles (no
+pre-rendered pages), not usually with uploads.
+
+## 5. The default LaTeX template requires Times New Roman by name
+
+`Legal-Template.tex` has `\setmainfont{Times New Roman}` when `fontfamily` is unset, so any image
+without Microsoft's fonts cannot make PDFs. A configuration directive for the default font family (or a
+fallback such as `\IfFontExistsTF`) would let packagers ship an openly licensed metric-compatible face
+(Tinos, Liberation Serif) without patching the template.
+
+## 6. Small documentation gaps met while packaging
 
 - The Python code reads `DA_CONFIG_FILE`; `DA_CONFIG` is translated by the shell scripts only.
 - Without the version file, `system version` falls back to 0.1.12, which silently disables the

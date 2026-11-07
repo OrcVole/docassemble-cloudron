@@ -4,6 +4,40 @@ Anonymised. Box-specific detail lives in the maintainer's local notes, not here.
 
 ---
 
+## 2026-11-07 (afternoon): first image; both day-one proofs pass on the local stack
+
+Image built from `cloudron/base:6.0.1` (6.1 GB), run under `test/local-stack.sh`: read-only root
+filesystem, `/app/data` volume, PostgreSQL 18 and a password-protected Redis standing in for the addons.
+
+**Validated:**
+
+- **First boot is healthy in 20 s** (tables, migrations, package check, seven programs); a restart takes
+  about 40 s including the stop, and leaves `config.yml` untouched ("refreshed nothing").
+- **Proof 1 (ADR 0005):** background PDF on the `celery` queue (19,240 bytes, set in Tinos), then OCR of
+  it on the `single` queue, both through Redis database 3; the same after a restart.
+- **Proof 2 (ADR 0004):** a fixture add-on installed through `POST /api/package` lands in
+  `/app/data/packages` and is imported from there by the restarted web app, with no manual restart; it
+  survives an app restart. Shadowing a pinned library fails cleanly on the read-only image.
+
+**Surfaced and fixed:**
+
+- supervisord as the app user cannot create its socket in root-owned `/run`: it runs as root, every
+  program as `cloudron` (the fleet's pattern); `reset.sh` uses the authenticated localhost port.
+- nginx as `cloudron` cannot reopen root's stdout pipe: `access_log off` (Cloudron's proxy logs requests);
+  `error_log stderr` works.
+- The NLTK daemon reads only `NLTKSOCKET`, not the config key.
+- Times New Roman required by the default LaTeX template (ADR 0006: Tinos).
+- Two upstream OCR bugs (ADR 0007).
+- fontconfig wrote its build-time cache to the runtime cache directory; the operator-fonts config is
+  now installed after the build's `fc-cache`.
+- A proof can pass vacuously: `docassemble.demo` is already in the image. Proof 2 uses a fixture that
+  exists nowhere else.
+
+**Still open:** the Proving Ground gates (0 to 4), LDAP sign-in (the WhoAmI check), mail through the
+sendmail addon, live help across two browsers, memory (gate 4), and the stranger path (gate 5).
+
+---
+
 ## 2026-11-07: repository started; Python 3.15 probe; upstream source read
 
 Desk research against docassemble v1.10.15's source, then a probe build on `cloudron/base:6.0.1`. No

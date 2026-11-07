@@ -1,0 +1,7 @@
+modules:
+  - .proofmod
+---
+mandatory: True
+question: Add-on proof
+subquestion: |
+  ${ marker() }

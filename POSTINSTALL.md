@@ -1,5 +1,6 @@
 This app has its own administrator account, separate from your Cloudron account. Its email address
-and password are generated for this install and shown in the checklist. Sign in with them first, then
+is `admin@` followed by this app's domain, and its password is generated for this install and kept in
+`/app/data/.secrets/admin-password` (the checklist shows how to read it). Sign in with it first, then
 change the password.
 
 Cloudron users can sign in with their Cloudron email address and password. They start as ordinary users;

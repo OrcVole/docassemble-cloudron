@@ -1,0 +1,43 @@
+# Proof 1 (ADR 0005): a PDF assembled in a background task on the `celery` queue (pandoc + LuaLaTeX),
+# then that PDF read back by OCR on the `single` queue (poppler + Tesseract). The done screen prints
+# both results for test/proofs.sh to check.
+metadata:
+  title: Cloudron package proof
+---
+attachment:
+  variable name: proof_letter
+  name: Proof letter
+  filename: proof_letter
+  valid formats:
+    - pdf
+  content: |
+    # Proof letter
+
+    The quick brown fox jumps over the lazy dog. Docassemble on Cloudron.
+---
+code: |
+  pdf_task = background_action('assemble_letter')
+---
+code: |
+  ocr_task = ocr_file_in_background(proof_letter.pdf, language='en')
+---
+event: assemble_letter
+code: |
+  background_response(proof_letter.pdf.size_in_bytes())
+---
+mandatory: True
+code: |
+  if not pdf_task.ready():
+    waiting_screen
+  if not ocr_task.ready():
+    waiting_screen
+  done_screen
+---
+event: waiting_screen
+question: Working
+reload: 2
+---
+event: done_screen
+question: Done
+subquestion: |
+  PDFBYTES=${ pdf_task.get() } OCRTEXT=${ str(ocr_task.get()).replace('\n', ' ') }

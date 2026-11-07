@@ -42,9 +42,28 @@ channel is this app's own password-protected Redis, which only this app can reac
   does not run. Outgoing mail works through Cloudron.
 - **SMS, fax, text-to-speech and machine translation start switched off**, which saves memory. They
   use outside services (for example Twilio) and can be turned on in the configuration.
-- **Add-on packages must ship wheels.** The runtime image has no compiler.
-- **One small code change:** the websocket server is patched to send the Redis password
-  ([ADR 0003](docs/decisions/0003-websocket-redis-auth-patch.md)); the fix is offered upstream.
+- **Add-on packages must ship wheels** (the runtime image has no compiler), and must work with the
+  library versions docassemble itself pins. An add-on that needs a different version of one of those
+  libraries fails to install with a "read-only file system" error, and nothing changes.
+- **Three small code changes**, each offered upstream: live help sends the Redis password
+  ([ADR 0003](docs/decisions/0003-websocket-redis-auth-patch.md)), the default PDF font is Tinos
+  ([ADR 0006](docs/decisions/0006-pdf-font-tinos.md)), and two bugs that stopped background OCR
+  returning text are fixed ([ADR 0007](docs/decisions/0007-ocr-fixes.md)).
+
+## Fonts for PDFs
+
+docassemble's default PDF template asks for Times New Roman, which this package cannot redistribute.
+It uses **Tinos** instead ([ADR 0006](docs/decisions/0006-pdf-font-tinos.md)): every character has
+the same width and the line spacing is the same, so lines and pages break where they would in Times
+New Roman. PDFs name Tinos in their font list.
+
+Two modern faces are also installed. Choose one per document with `fontfamily:` in the attachment's
+metadata: **STIX Two Text** (a current design in the Times tradition, about 3% longer) or **Source
+Serif 4** (optical sizes, every figure style, about 8% longer).
+
+**Your own fonts** (a house style, or Times New Roman itself where a court rule names it and you hold
+a licence): put the `.ttf` or `.otf` files in `/app/data/fonts` with the app's file manager and
+restart the app. They are then available to PDFs and included in backups.
 
 ## Credits
 

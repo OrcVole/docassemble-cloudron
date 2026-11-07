@@ -16,21 +16,49 @@
     "postgresql": {},
     "redis": {},
     "ldap": {},
-    "sendmail": { "supportsDisplayName": true },
+    "sendmail": {
+      "supportsDisplayName": true
+    },
     "scheduler": {
-      "hourly": { "schedule": "7 * * * *", "command": "/app/code/bin/cron.sh hourly" },
-      "daily": { "schedule": "25 4 * * *", "command": "/app/code/bin/cron.sh daily" },
-      "weekly": { "schedule": "47 4 * * 0", "command": "/app/code/bin/cron.sh weekly" },
-      "monthly": { "schedule": "52 4 1 * *", "command": "/app/code/bin/cron.sh monthly" }
+      "hourly": {
+        "schedule": "7 * * * *",
+        "command": "/app/code/bin/cron.sh hourly"
+      },
+      "daily": {
+        "schedule": "25 4 * * *",
+        "command": "/app/code/bin/cron.sh daily"
+      },
+      "weekly": {
+        "schedule": "47 4 * * 0",
+        "command": "/app/code/bin/cron.sh weekly"
+      },
+      "monthly": {
+        "schedule": "52 4 1 * *",
+        "command": "/app/code/bin/cron.sh monthly"
+      }
     }
   },
   "optionalSso": true,
-  "tags": ["legal", "forms", "documents", "interviews", "pdf"],
+  "tags": [
+    "legal",
+    "forms",
+    "documents",
+    "interviews",
+    "pdf"
+  ],
   "website": "https://docassemble.org",
   "documentationUrl": "https://github.com/OrcVole/docassemble-cloudron",
   "packagerName": "OrcVole",
   "packageUrl": "https://github.com/OrcVole/docassemble-cloudron",
   "packagerUrl": "https://github.com/OrcVole",
   "manifestVersion": 2,
-  "minBoxVersion": "10.0.0"
+  "minBoxVersion": "10.0.0",
+  "checklist": {
+    "admin-password": {
+      "message": "Sign in as the docassemble administrator: the email is `admin@` followed by this app's domain, and the password is in `/app/data/.secrets/admin-password` (open a Terminal for this app with the `>_` button and run `cat /app/data/.secrets/admin-password`). Change the password after signing in."
+    },
+    "roles": {
+      "message": "Cloudron users sign in with their Cloudron email address and start as ordinary users. Give the developer or administrator role only to people you would trust with all of this app's data (see the post-install notes)."
+    }
+  }
 }

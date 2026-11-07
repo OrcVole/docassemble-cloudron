@@ -1,6 +1,6 @@
 # 0004. Add-on packages and Playground modules in `/app/data/packages`
 
-- **Status:** proposed, 2026-11-07. Decided by proof 2, the first thing the build must pass.
+- **Status:** accepted, 2026-11-07 (proof 2 passed on the local stack; see "Evidence")
 
 ## Context
 
@@ -37,3 +37,20 @@ read-only image (ADR 0001, principle 3).
 The prefix stays writable either way, because the Playground needs it. If installing from the UI
 cannot be made safe, turn off Package Management only (`allow updates: False`) and install a list of
 packages kept in `/app/data` at start. Say so plainly in DESCRIPTION.
+
+## Evidence (2026-11-07, local stack, read-only root filesystem)
+
+1. A fixture add-on (`test/fixtures/addon`, present nowhere in the image) uploaded through
+   `POST /api/package` was installed by docassemble's own pip call into `/app/data/packages`, the
+   `reset` program restarted the web app and workers through supervisord's localhost port, and its
+   interview then reported `proofmod.py` imported from `/app/data/packages/lib/python3.15/site-packages`.
+   No manual restart. (A first attempt with `docassemble.demo` passed vacuously: it is a dependency of
+   docassemble.webapp and already in the image. The fixture exists so the proof can fail.)
+2. After an app restart the interview still starts and docassemble's package record is intact.
+3. Shadowing: pip, asked for a different version of a library the image already has, tries to remove
+   the image's copy, fails on the read-only filesystem and stops. Nothing changes. **Rule:** add-ons must
+   work with the library versions docassemble pins; the README says so.
+
+Caveat for later: the prefix path names the Python minor version (`python3.15`). A future move to 3.16
+must reinstall add-ons from docassemble's package table, which `update initialize` does at start;
+prove it in that update's gate 3.

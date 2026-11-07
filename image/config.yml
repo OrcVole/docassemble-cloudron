@@ -1,0 +1,81 @@
+# docassemble configuration, written ONCE on first install by the Cloudron package and then yours.
+# Edit it in docassemble (Configuration) or in the app's file manager; changes survive restarts.
+#
+# Supplied by Cloudron through the environment on every start, so they follow credential and domain
+# changes and need not appear here: the database, Redis (also the task broker), the secret key, the
+# hostname and URL, and the supervisor credentials.
+#
+# Refreshed by the package on every start, because they have no environment equivalent:
+#   mail          Cloudron's mail relay. Set "cloudron manages mail: False" to use your own.
+#   ldap login    Cloudron sign-in. Set "cloudron manages ldap: False" to configure it yourself.
+#   debug, allow demo   forced False.
+
+debug: False
+allow demo: False
+enable playground: True
+allow log viewing: True
+allow configuration editing: True
+allow updates: True
+update on start: True
+allow registration: False
+
+default title: docassemble
+default short title: doc
+default interview: docassemble.base:data/questions/default-interview.yml
+exitpage: https://docassemble.org
+language: en
+locale: en_US.utf8
+os locale: en_US.UTF-8 UTF-8
+timezone: @TIMEZONE@
+words:
+  - docassemble.base:data/sources/us-words.yml
+
+# Where things live. /app/data is backed up; /run is not.
+uploads: /app/data/files
+packages: /app/data/packages
+pypirc path: /app/data/home/.pypirc
+log: /run/docassemble/log
+webapp: /run/docassemble/docassemble.wsgi
+ready file: /run/docassemble/ready
+version file: /app/code/VERSION
+nltk socket: /run/docassemble/nltk.sock
+web server certificate directory: /run/docassemble/certs
+packagecache: /run/docassemble/home/.cache
+libreoffice macro file: /run/docassemble/home/.config/libreoffice/4/user/basic/Standard/Module1.xba
+
+# Serving, behind Cloudron's TLS proxy and the package's own nginx.
+web server: nginx
+behind https load balancer: True
+use https: False
+use nginx to serve files: True
+xsendfile: False
+root: /
+websockets ip: 127.0.0.1
+websockets port: 5000
+
+# Background tasks. Each worker process costs memory; raise with care (and the app's memory limit).
+celery processes: 2
+
+# Document conversion through unoserver (LibreOffice).
+enable unoconv: True
+unoconvert path: /app/code/uno/bin/unoconvert
+
+# Features. Off: they need services this package does not run, or outside accounts you can add.
+enable email server: False
+enable sms interface: False
+enable faxing: False
+enable tts: False
+enable api: True
+enable daglobal: True
+enable json storage: True
+enable monitor: True
+enable object storage: True
+enable training: True
+
+# Upstream's interview behaviour defaults for new installs.
+allow non-idempotent questions: False
+restrict input variables: True
+new markdown to docx: True
+new template markdown behavior: True
+default icons: font awesome
+javascript defer: True
