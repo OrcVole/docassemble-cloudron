@@ -60,5 +60,10 @@
     "roles": {
       "message": "Cloudron users sign in with their Cloudron email address and start as ordinary users. Give the developer or administrator role only to people you would trust with all of this app's data (see the post-install notes)."
     }
-  }
+  },
+  "iconUrl": "https://raw.githubusercontent.com/OrcVole/docassemble-cloudron/main/logo.png",
+  "mediaLinks": [
+    "https://raw.githubusercontent.com/OrcVole/docassemble-cloudron/main/screenshots/interview.png"
+  ],
+  "dockerImage": "ghcr.io/orcvole/docassemble-cloudron@sha256:2a10dc4b0d5b0d9bec720dbaf9d27739a436bb880e46aec059b81fd063fbc5a1"
 }
