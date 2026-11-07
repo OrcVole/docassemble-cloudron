@@ -45,10 +45,11 @@ channel is this app's own password-protected Redis, which only this app can reac
 - **Add-on packages must ship wheels** (the runtime image has no compiler), and must work with the
   library versions docassemble itself pins. An add-on that needs a different version of one of those
   libraries fails to install with a "read-only file system" error, and nothing changes.
-- **Three small code changes**, each offered upstream: live help sends the Redis password
+- **Four small code changes**, each offered upstream: live help sends the Redis password
   ([ADR 0003](docs/decisions/0003-websocket-redis-auth-patch.md)), the default PDF font is Tinos
   ([ADR 0006](docs/decisions/0006-pdf-font-tinos.md)), and two bugs that stopped background OCR
-  returning text are fixed ([ADR 0007](docs/decisions/0007-ocr-fixes.md)).
+  returning text are fixed ([ADR 0007](docs/decisions/0007-ocr-fixes.md)), and LDAP sign-in works with
+  Cloudron's directory ([ADR 0008](docs/decisions/0008-ldap-sign-in.md)).
 
 ## Fonts for PDFs
 

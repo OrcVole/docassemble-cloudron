@@ -22,6 +22,11 @@ allow registration: False
 default title: docassemble
 default short title: doc
 default interview: docassemble.base:data/questions/default-interview.yml
+# Where anonymous visitors to / are sent. A fresh install has no interview of its own, and docassemble
+# refuses its built-in sample interviews to anonymous visitors while demos are off (they would see
+# "Not authorized"), so / goes to the sign-in page. When you publish an interview, delete this line and
+# set "default interview" (or "dispatch") to it.
+root redirect url: /user/sign-in
 exitpage: https://docassemble.org
 language: en
 locale: en_US.utf8

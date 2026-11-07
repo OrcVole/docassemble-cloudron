@@ -44,7 +44,14 @@ without Microsoft's fonts cannot make PDFs. A configuration directive for the de
 fallback such as `\IfFontExistsTF`) would let packagers ship an openly licensed metric-compatible face
 (Tinos, Liberation Serif) without patching the template.
 
-## 6. Small documentation gaps met while packaging
+## 6. LDAP sign-in requires the WhoAmI extended operation
+
+`MySignInForm.validate` calls `connect.whoami_s()` after a successful bind. Some LDAP servers (Cloudron's
+among them) do not implement WhoAmI (RFC 4532), so LDAP sign-in always falls back to local passwords.
+A related point about how a bind result is interpreted has been sent privately, as SECURITY.md asks.
+This package's change is in ADR 0008.
+
+## 7. Small documentation gaps met while packaging
 
 - The Python code reads `DA_CONFIG_FILE`; `DA_CONFIG` is translated by the shell scripts only.
 - Without the version file, `system version` falls back to 0.1.12, which silently disables the

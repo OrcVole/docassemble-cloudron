@@ -40,6 +40,11 @@ RUN /app/code/venv/bin/python /tmp/patch-socketserver.py \
 COPY image/patch-ocr.py /tmp/patch-ocr.py
 RUN /app/code/venv/bin/python /tmp/patch-ocr.py /app/code/venv/lib/python3.15/site-packages
 
+# ADR 0008: LDAP sign-in with Cloudron's ldap addon (no WhoAmI there; anonymous binds refused).
+COPY image/patch-ldap.py /tmp/patch-ldap.py
+RUN /app/code/venv/bin/python /tmp/patch-ldap.py \
+      /app/code/venv/lib/python3.15/site-packages/docassemble/webapp/users/forms.py
+
 # ADR 0006: the default PDF template's font becomes Tinos (Times New Roman cannot ship).
 COPY image/patch-pdf-font.py /tmp/patch-pdf-font.py
 RUN /app/code/venv/bin/python /tmp/patch-pdf-font.py \

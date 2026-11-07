@@ -6,6 +6,7 @@
 #
 # CLI is the maintainer's wrapper for the target box (it must accept `exec --app`, `restart --app`
 # and `logs --app`). Host-side digest comparison is optional: set PULLED=<digest seen on the host>.
+# INSECURE=1 skips TLS verification (for a lab whose certificate chain this workstation does not trust).
 set -uo pipefail
 CLI="${CLI:?set CLI}"; APP="${APP:?set APP}"; DIGEST="${DIGEST:?set DIGEST}"
 fail=0
@@ -21,11 +22,13 @@ else
 fi
 
 # 2. Health from outside, and robots.txt (field guide #316).
-code=$(curl -s -o /dev/null -w '%{http_code}' "https://${APP}/healthz")
+code=$(curl -s ${INSECURE:+-k} -o /dev/null -w '%{http_code}' "https://${APP}/healthz")
 [ "$code" = 200 ] && pass "health: /healthz 200 from outside" || bad "health: /healthz ${code}"
-root=$(curl -s -o /dev/null -w '%{http_code}' "https://${APP}/")
+root=$(curl -s ${INSECURE:+-k} -o /dev/null -w '%{http_code}' "https://${APP}/")
 [[ "$root" =~ ^(200|302)$ ]] && pass "anonymous /: ${root} (not an error page)" || bad "anonymous /: ${root}"
-robots=$(curl -s "https://${APP}/robots.txt" | tr -d '\r' | grep -v '^#' | tr '\n' ' ')
+signin=$(curl -s ${INSECURE:+-k} -o /dev/null -w '%{http_code}' -L "https://${APP}/")
+[ "$signin" = 200 ] && pass "anonymous / lands on a working page (200 after redirects)" || bad "anonymous / after redirects: ${signin}"
+robots=$(curl -s ${INSECURE:+-k} "https://${APP}/robots.txt" | tr -d '\r' | grep -v '^#' | tr '\n' ' ')
 echo "$robots" | grep -q 'Disallow: /' && ! echo "$robots" | grep -qE 'Disallow: *$' \
     && pass "robots.txt disallows all: ${robots}" || bad "robots.txt: ${robots}"
 
@@ -42,16 +45,19 @@ echo "$status" | grep -qE '^ready +EXITED' && pass "programs: ${running} RUNNING
 # 4. Secrets: mode 600, cloudron:cloudron, and the same sha256 after a restart.
 snap() { ex 'cd /app/data/.secrets && for f in *; do printf "%s %s %s\n" "$f" "$(stat -c "%a %U:%G" "$f")" "$(sha256sum < "$f" | cut -c1-16)"; done'; }
 before=$(snap)
+cfg_before=$(ex 'sha256sum < /app/data/config/config.yml' | cut -c1-64)
 echo "$before" | awk '{print $2, $3}' | grep -v '^600 cloudron:cloudron$' >/dev/null \
     && bad "secret modes: $(echo "$before" | awk '{print $1, $2, $3}' | tr '\n' ';')" \
     || pass "secrets: $(echo "$before" | wc -l) files, all 600 cloudron:cloudron"
 $CLI restart --app "$APP" >/dev/null 2>&1
-for _ in $(seq 1 90); do [ "$(curl -s -o /dev/null -w '%{http_code}' "https://${APP}/healthz")" = 200 ] && break; sleep 5; done
+for _ in $(seq 1 90); do [ "$(curl -s ${INSECURE:+-k} -o /dev/null -w '%{http_code}' "https://${APP}/healthz")" = 200 ] && break; sleep 5; done
 after=$(snap)
+cfg_after=$(ex 'sha256sum < /app/data/config/config.yml' | cut -c1-64)
 [ "$before" = "$after" ] && pass "secrets: sha256 unchanged across restart ($(echo "$after" | awk '{print $1"="$4}' | tr '\n' ' '))" \
     || bad "secrets changed across restart"
-cfg_first=$($CLI logs --app "$APP" --lines 400 2>/dev/null | grep -c 'first boot: writing')
-[ "$cfg_first" = 0 ] && pass "boot path: existing config found (no first-boot line after restart)" || bad "restart took the first-boot path"
+[ "$cfg_before" = "$cfg_after" ] && pass "config.yml: unchanged across restart (sha256 ${cfg_after:0:12}; first-boot write did not repeat)" \
+    || bad "config.yml changed across restart (${cfg_before:0:12} -> ${cfg_after:0:12})"
+X
 
 # 5. Logs clean at idle.
 sleep "${IDLE_SECONDS:-180}"
