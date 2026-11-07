@@ -33,4 +33,3 @@ box involved yet, so nothing below is proven on Cloudron.
 
 - Proof 1 (ADR 0005) and proof 2 (ADR 0004): need the image and live services.
 - Whether the health check should prove the database is reachable.
-- `logo.png`: not yet chosen. The manifest references it.

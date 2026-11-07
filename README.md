@@ -48,6 +48,8 @@ channel is this app's own password-protected Redis, which only this app can reac
 
 ## Credits
 
+The icon is docassemble's own logo (from docassemble.org) on a dark tile.
+
 timconsidine's community package showed the way on running docassemble with Cloudron's addons only,
 using Redis as the task broker and generating secrets per install. Thank you.
 
