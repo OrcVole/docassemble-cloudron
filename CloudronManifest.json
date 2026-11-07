@@ -10,7 +10,7 @@
   "upstreamVersion": "1.10.15",
   "httpPort": 8000,
   "healthCheckPath": "/healthz",
-  "memoryLimit": 8589934592,
+  "memoryLimit": 4831838208,
   "addons": {
     "localstorage": {},
     "postgresql": {},

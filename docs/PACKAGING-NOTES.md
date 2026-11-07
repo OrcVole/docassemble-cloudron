@@ -4,6 +4,30 @@ Anonymised. Box-specific detail lives in the maintainer's local notes, not here.
 
 ---
 
+## 2026-11-07 (evening): gate ladder 0 to 4 on a test Cloudron 10.1.6
+
+Four candidates of 0.1.0; every finding below landed before the final one
+(`sha256:2a10dc4b...`). Evidence tables: `docs/DEBUGGING.md`.
+
+**Surfaced and fixed:**
+
+- Anonymous `/` answered 501: with demos off, docassemble refuses its built-in default interview to
+  anonymous visitors. Fresh installs now redirect `/` to sign-in (`root redirect url`).
+- No Cloudron user could sign in: Cloudron's LDAP server lacks WhoAmI (ADR 0008). The fix also refuses
+  anonymous binds, which Cloudron's server accepts.
+- Two background tasks in 602 failed under load: Celery's forked workers shared the parent's database
+  connection (ADR 0009). 0 of 1,210 after the fix.
+- The scanner template still pinned base 5.0.0's SSH host keys; NLTK's dictionary data matched two
+  short denylist patterns (scoped allowlist).
+- The workstation does not trust the test box's new Let's Encrypt intermediate (YE2): gate scripts
+  take `INSECURE=1` for that box only.
+
+**Validated:** see DEBUGGING.md. `memoryLimit` 4.5 GiB from a measured 3.1 GiB peak.
+
+**Still open:** gate 5 (stranger path) after publication; clone leg not run.
+
+---
+
 ## 2026-11-07 (afternoon): first image; both day-one proofs pass on the local stack
 
 Image built from `cloudron/base:6.0.1` (6.1 GB), run under `test/local-stack.sh`: read-only root

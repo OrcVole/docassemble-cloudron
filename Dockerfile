@@ -112,6 +112,8 @@ RUN fc-cache -f >/dev/null && fc-list | grep -q 'Tinos' && fc-list | grep -q 'So
 COPY image/fontconfig-app-data.conf /etc/fonts/conf.d/99-app-data-fonts.conf
 
 COPY --from=builder /app/code /app/code
+# ADR 0009: each forked Celery worker gets its own database connections (loaded with --include).
+COPY image/cloudron_celery_fork.py /app/code/venv/lib/python3.15/site-packages/cloudron_celery_fork.py
 
 # unoserver runs on the distribution's Python because it needs LibreOffice's uno binding (ADR 0002).
 RUN uv venv --system-site-packages --python /usr/bin/python3 /app/code/uno \
@@ -134,7 +136,7 @@ COPY start.sh /app/code/start.sh
 RUN chmod +x /app/code/start.sh /app/code/bin/*
 
 # Build gate: the packaged interpreter, docassemble, the patch and the add-on path are all present.
-RUN /app/code/venv/bin/python -c "import docassemble.base, docassemble.webapp, ldap, psycopg2, celery, pyzbar.pyzbar" \
+RUN /app/code/venv/bin/python -c "import docassemble.base, docassemble.webapp, ldap, psycopg2, celery, pyzbar.pyzbar, cloudron_celery_fork" \
  && /app/code/venv/bin/uwsgi --version \
  && mkdir -p /app/data/packages/lib/python3.15/site-packages \
  && /app/code/venv/bin/python -c "import sys; assert '/app/data/packages/lib/python3.15/site-packages' in sys.path, sys.path" \

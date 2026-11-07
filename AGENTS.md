@@ -29,7 +29,8 @@ Not included: RabbitMQ, exim4, syslog-ng, Apache, certbot, upstream's cron and w
 
 1. **Conformance to the Cloudron contract first.** Adapt the runtime environment, not the application.
    **Recorded exceptions, each guarded at build time and reported upstream:** ADR 0003 (websocket
-   Redis authentication), ADR 0006 (default PDF font), ADR 0007 (two OCR bugs), ADR 0008 (LDAP sign-in). Any further patch
+   Redis authentication), ADR 0006 (default PDF font), ADR 0007 (two OCR bugs), ADR 0008 (LDAP sign-in). ADR 0009 (fork-safe Celery
+   connections) adds a module of our own rather than changing docassemble's code. Any further patch
    needs its own ADR, a build-time guard, and an upstream report.
 2. **Pin everything** by digest or exact version: base, uv, the interpreter, docassemble, uWSGI,
    unoserver. One build argument for the docassemble version, mirrored as `upstreamVersion`.
@@ -56,8 +57,10 @@ Not included: RabbitMQ, exim4, syslog-ng, Apache, certbot, upstream's cron and w
 - **Python:** CPython 3.15.2 via pinned uv (ADR 0002). Fallback: newest 3.14.
 - **Fresh installs only;** no migration from v0.1.
 - **Playground on**, with the trust wording in README, DESCRIPTION and POSTINSTALL.
-- **memoryLimit:** 8 GiB placeholder until gate 4 measures it. Gate 4 reads all of `memory.events`
-  and `memory.swap.peak`, not only OOM kills.
+- **memoryLimit: 4.5 GiB** (4831838208 bytes), from gate 4 on 2026-11-07: idle 1.8 GiB, loaded peak
+  3.1 GiB under 8 clients for 6 minutes (598 sessions), `memory.events` max 0, no swap. Each extra
+  Celery process (`celery processes` in config.yml) costs about 450 MiB; raise the limit with it.
+  Re-run gate 4 (`test/load.py`) on any change that adds a process or a heavier default.
 - **Health:** `/healthz` from the internal nginx: 503 until docassemble's ready file exists, then a
   proxy to `/health_check`. Never `/`, which answers anonymous visitors with an error page.
 - **Sign-in:** the `ldap` addon (docassemble has no generic OIDC provider). The first administrator

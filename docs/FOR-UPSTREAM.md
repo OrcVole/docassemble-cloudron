@@ -51,7 +51,21 @@ among them) do not implement WhoAmI (RFC 4532), so LDAP sign-in always falls bac
 A related point about how a bind result is interpreted has been sent privately, as SECURITY.md asks.
 This package's change is in ADR 0008.
 
-## 7. Small documentation gaps met while packaging
+## 7. Celery workers share database connections inherited from the parent (bug)
+
+The Celery parent opens a PostgreSQL connection while importing `docassemble.webapp.worker`, and the
+prefork pool's children inherit the socket. Under concurrent background tasks two processes use one
+connection and the stream breaks: `error with status PGRES_TUPLES_OK and no message from the libpq`,
+`ResourceClosedError`, `StaleDataError`. Measured: 2 failed tasks in 602 sessions (8 clients, 6
+minutes); 0 in 598 after the fix. Suggested fix, SQLAlchemy's documented pattern for forked processes:
+
+    @worker_process_init.connect
+    def _fresh_connections(**_):
+        for engine in (all SQLAlchemy engines): engine.dispose(close=False)
+
+This package does it from outside (ADR 0009).
+
+## 8. Small documentation gaps met while packaging
 
 - The Python code reads `DA_CONFIG_FILE`; `DA_CONFIG` is translated by the shell scripts only.
 - Without the version file, `system version` falls back to 0.1.12, which silently disables the

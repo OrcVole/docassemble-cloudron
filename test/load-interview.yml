@@ -1,0 +1,13 @@
+# Gate 4 load: a DOCX converted to PDF through unoserver (LibreOffice), in the web process.
+metadata:
+  title: Cloudron load
+---
+mandatory: True
+code: |
+  converted = pdf_concatenate(DAStaticFile(filename='docassemble.base:data/templates/letter_template.docx'), filename='load.pdf')
+  load_bytes = converted.size_in_bytes()
+---
+mandatory: True
+question: Load done
+subquestion: |
+  LOADDONE=${ load_bytes }
