@@ -1,7 +1,9 @@
 # Docassemble for Cloudron
 
-> **Status: in development, not yet published.** Nothing here is ready to install. This README states
-> the design; `docs/PACKAGING-NOTES.md` records what has been proven so far.
+> **Status: 0.1.0 published** (docassemble 1.10.15). Install on Cloudron 10 from the community
+> versions feed: `https://raw.githubusercontent.com/OrcVole/docassemble-cloudron/main/CloudronVersions.json`
+> (App Store, then "Install from URL"; or `cloudron install --versions-url <that URL>`). The gate
+> evidence behind this release is in [`docs/DEBUGGING.md`](docs/DEBUGGING.md).
 
 [Docassemble](https://docassemble.org) (MIT) runs guided interviews written in YAML and Python that
 produce letters, forms and PDFs. It is widely used in legal aid. This package runs docassemble
