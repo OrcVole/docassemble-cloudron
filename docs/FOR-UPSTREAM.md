@@ -48,7 +48,7 @@ fallback such as `\IfFontExistsTF`) would let packagers ship an openly licensed 
 
 `MySignInForm.validate` calls `connect.whoami_s()` after a successful bind. Some LDAP servers (Cloudron's
 among them) do not implement WhoAmI (RFC 4532), so LDAP sign-in always falls back to local passwords.
-A related point about how a bind result is interpreted has been sent privately, as SECURITY.md asks.
+A related point about how a bind result is interpreted is being reported privately, as SECURITY.md asks.
 This package's change is in ADR 0008.
 
 ## 7. Celery workers share database connections inherited from the parent (bug)

@@ -39,5 +39,7 @@ errors), not the descriptor listing.
 ## Consequences
 
 - Reported upstream (`docs/FOR-UPSTREAM.md`), with the same three-line handler as the suggested fix.
-- uWSGI runs a single worker under its master; the master does not query after forking, so it is left
-  as upstream configures it.
+- uWSGI runs a single worker under its master, and `ss` shows the master and worker holding one inherited
+  PostgreSQL socket. Observed, not proven: the gate 4 loads produced no connection errors from the web
+  process, consistent with the master not querying after the fork. Left as upstream configures it; if
+  web-side libpq errors ever appear, apply the same pattern (`lazy-apps = true` in uwsgi.ini).
