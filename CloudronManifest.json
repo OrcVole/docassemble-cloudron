@@ -1,0 +1,36 @@
+{
+  "id": "io.github.orcvole.docassemble",
+  "title": "Docassemble",
+  "tagline": "Guided interviews that assemble letters, forms and PDFs",
+  "description": "file://DESCRIPTION.md",
+  "changelog": "file://CHANGELOG.md",
+  "postInstallMessage": "file://POSTINSTALL.md",
+  "icon": "file://logo.png",
+  "version": "0.1.0",
+  "upstreamVersion": "1.10.15",
+  "httpPort": 8000,
+  "healthCheckPath": "/healthz",
+  "memoryLimit": 8589934592,
+  "addons": {
+    "localstorage": {},
+    "postgresql": {},
+    "redis": {},
+    "ldap": {},
+    "sendmail": { "supportsDisplayName": true },
+    "scheduler": {
+      "hourly": { "schedule": "7 * * * *", "command": "/app/code/bin/cron.sh hourly" },
+      "daily": { "schedule": "25 4 * * *", "command": "/app/code/bin/cron.sh daily" },
+      "weekly": { "schedule": "47 4 * * 0", "command": "/app/code/bin/cron.sh weekly" },
+      "monthly": { "schedule": "52 4 1 * *", "command": "/app/code/bin/cron.sh monthly" }
+    }
+  },
+  "optionalSso": true,
+  "tags": ["legal", "forms", "documents", "interviews", "pdf"],
+  "website": "https://docassemble.org",
+  "documentationUrl": "https://github.com/OrcVole/docassemble-cloudron",
+  "packagerName": "OrcVole",
+  "packageUrl": "https://github.com/OrcVole/docassemble-cloudron",
+  "packagerUrl": "https://github.com/OrcVole",
+  "manifestVersion": 2,
+  "minBoxVersion": "10.0.0"
+}

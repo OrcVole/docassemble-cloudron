@@ -1,0 +1,22 @@
+# Keep the build context small and free of secrets and notes. The image needs only what the
+# Dockerfile COPYs (start.sh and the files under image/).
+.git
+.gitignore
+.claude/
+.secrets/
+*token*.txt
+*.token
+.env
+.env.*
+.anonymize-list
+.cloudron.json
+phase-notes/
+docs/
+test/
+screenshots/
+*.md
+*.log
+scratchpad/
+tmp/
+__pycache__/
+*.pyc

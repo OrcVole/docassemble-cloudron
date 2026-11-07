@@ -1,0 +1,29 @@
+# Secrets and local credentials: never commit. test/secret-scan.sh checks none leaked.
+*token*.txt
+*.token
+.secrets/
+.env
+.env.*
+*.key
+.cloudron.json
+
+# Maintainer-private denylist read by test/secret-scan.sh; never published.
+.anonymize-list
+
+# Editor and harness local state.
+.claude/
+
+# Local-only working notes. They carry box-specific detail; the anonymised public record of what
+# was verified is docs/PACKAGING-NOTES.md.
+phase-notes/
+FOUNDATION-PROMPT.md
+NOTES.md
+STATUS.md
+RETROSPECTIVE.md
+
+# Build, test and scratch artefacts.
+*.log
+scratchpad/
+tmp/
+__pycache__/
+*.pyc
