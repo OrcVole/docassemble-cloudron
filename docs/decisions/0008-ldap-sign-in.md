@@ -39,5 +39,5 @@ the app, then bind as the DN found with the user's password.
 
 - Cloudron users become docassemble `user`s on first sign-in; an administrator grants `developer` or
   `admin`. Local accounts keep working (`optionalSso`).
-- Any other LDAP server with the same properties is handled the same way. The general point is being
-  reported to upstream privately, as its security policy asks.
+- Any other LDAP server with the same properties is handled the same way. The general point was
+  reported to upstream privately on 2026-11-07, as its security policy asks.

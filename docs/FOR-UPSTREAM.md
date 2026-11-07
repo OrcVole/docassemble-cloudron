@@ -6,6 +6,8 @@ Paths and line numbers are from v1.10.15.
 
 ## 1. Live help does not send the Redis password (bug)
 
+Reported 2026-11-07: https://github.com/jhpyle/docassemble/issues/1015
+
 `docassemble/webapp/socketserver.py` lines 102, 460 and 905 create
 `redis.StrictRedis(host=redis_host, port=redis_port, db=redis_offset)` with no `password`,
 `username` or TLS options, and line 28 imports only the host, port and offset. Every other connection
@@ -24,12 +26,16 @@ Playground.
 
 ## 3. Background OCR to text recurses until the database pool is exhausted (bug, since 1.10.0)
 
+Reported 2026-11-07: https://github.com/jhpyle/docassemble/issues/1016
+
 `webapp/tasks/tasks.py`, task `ocr_finalize`, final return: `content=ocr_finalize(*pargs, **kwargs)`
 calls the task itself. 1.9.0 had `worker_controller.util.ocr_finalize(...)`; the file imports that helper
 as `do_ocr_finalize`. Symptom: `ocr_file_in_background()` returns `QueuePool limit of size 5 overflow 10
 reached`. Fix: `content=do_ocr_finalize(*pargs, **kwargs)`.
 
 ## 4. `ocr_page` passes a pixel size to `pdftoppm -r` (bug, 1.9.0 or earlier)
+
+Reported 2026-11-07: https://github.com/jhpyle/docassemble/issues/1017
 
 `ocr_page_tasks` sets `ocr_resolution = str(int(float(ocr_resolution)*11.0))`, a `-scale-to` value
 (`ocr_file` uses it that way). `ocr_page`, when a page has no pre-rendered image, passes it to
@@ -48,10 +54,12 @@ fallback such as `\IfFontExistsTF`) would let packagers ship an openly licensed 
 
 `MySignInForm.validate` calls `connect.whoami_s()` after a successful bind. Some LDAP servers (Cloudron's
 among them) do not implement WhoAmI (RFC 4532), so LDAP sign-in always falls back to local passwords.
-A related point about how a bind result is interpreted is being reported privately, as SECURITY.md asks.
+A related point about how a bind result is interpreted was reported privately on 2026-11-07, as SECURITY.md asks.
 This package's change is in ADR 0008.
 
 ## 7. Celery workers share database connections inherited from the parent (bug)
+
+Reported 2026-11-07: https://github.com/jhpyle/docassemble/issues/1018
 
 The Celery parent opens a PostgreSQL connection while importing `docassemble.webapp.worker`, and the
 prefork pool's children inherit the socket. Under concurrent background tasks two processes use one
